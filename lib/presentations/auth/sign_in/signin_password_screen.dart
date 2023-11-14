@@ -1,78 +1,56 @@
-import 'package:flutter/cupertino.dart';
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:hairsol/core/app_export.dart';
-import 'package:hairsol/data/apiClient/api_client.dart';
-import 'package:hairsol/presentations/auth/choose_registration/choose_registration.dart';
-import 'package:hairsol/presentations/auth/sign_up/sign_up.dart';
 import 'package:hairsol/reusables/text_field.dart';
 import 'package:hairsol/widgets/app_bar/appbar_image.dart';
 import 'package:hairsol/widgets/app_bar/appbar_image_1.dart';
 import 'package:hairsol/widgets/app_bar/custom_app_bar.dart';
 import 'package:hairsol/widgets/custom_checkbox_button.dart';
 import 'package:hairsol/widgets/custom_elevated_button.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:http/http.dart' as http;
 
-import '../../../data/models/login/login_model.dart';
 import '../../dialogs/signin_dialog.dart';
 import '../forgot_password/forgot_password.dart';
 
-final obscureTextProvider = StateProvider<bool>((ref) => true);
-
-class SigninPasswordScreen extends ConsumerStatefulWidget {
+class SigninPasswordScreen extends StatelessWidget {
   SigninPasswordScreen({Key? key}) : super(key: key);
 
-  @override
-  ConsumerState<SigninPasswordScreen> createState() => _SigninPasswordScreenState();
-}
-
-class _SigninPasswordScreenState extends ConsumerState<SigninPasswordScreen> {
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-
   TextEditingController emailController = new TextEditingController();
   TextEditingController passwordController = new TextEditingController();
 
-  @override
-  void dispose() {
-    emailController.dispose();
-    passwordController.dispose();
-    super.dispose();
-  }
+  Future<void> signUp(BuildContext context) async {
+    final String email = emailController.text;
+    final String password = passwordController.text;
 
-  Future<void> signIn() async {
-    final String email = emailController.text.trim();
-    final String password = passwordController.text.trim();
+    // Validate input (optional)
 
-    if (email.isEmpty) {
-      // Email field is empty
-      print('Email field can\'t be empty');
-    }
-    else if (!email.isEmail) {
-      // Email is not a valid one.
-      print('Invalid email.');
-    } else if (password.isEmpty) {
-      // Email is not a valid one.
-      print('Password field is empty');
-    }
-    else {
+    // Send sign-up request
+    final response = await http.post(
+      Uri.parse('https://your-api-endpoint.com/signup'),
+      headers: {'Content-Type': 'application/json'},
+      body: {
+        'email': email,
+        'password': password,
+      },
+    );
 
-      final response = await ApiClient().login(email, password);
+    if (response.statusCode == 200) {
+      // Registration successful, handle the response
+      final Map<String, dynamic> responseData = json.decode(response.body);
+      print('Registration successful: $responseData');
+      // You can handle the success response here, e.g., navigate to the next screen.
 
-      switch (response.runtimeType) {
-        case (LoginModel) :
-          // Successful attempt
-          confirmTransfer();
-          break;
-        default:
-          // Unsuccessful attempt
-          final status = response['status'];
-          final errMsg = response['message'];
-          print('$status, $errMsg');
-      }
+      // Navigate to VerificationScreen
+    } else {
+      // Registration failed, handle the error
+      print('Registration failed with status: ${response.statusCode}');
+      // You can handle the error here, e.g., show an error message to the user.
     }
   }
 
-  confirmTransfer() async {
-
+  confirmTransfer(BuildContext context) async {
     showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -142,61 +120,81 @@ class _SigninPasswordScreenState extends ConsumerState<SigninPasswordScreen> {
                           ])),
                   SizedBox(height: 16),
                   Divider(color: Colors.grey.shade700),
-                  SizedBox(height: 16),
-                  CustomTextField(
-                    label: 'Email',
-                    controller: emailController,
-                    validator: (text){},
-                    onChanged: (String value){},
-                    hintText: 'Enter your email address',
-                    prefixIcon: Icons.mail ,
-                  ),
-                  CustomTextField(
-                    label: 'Password',
-                    controller: passwordController,
-                    validator: (text){
-                      return null;
-                    },
-                    onChanged: (String value){},
-                    hintText: 'Enter password',
-                    prefixIcon: Icons.lock,
-                    suffixIcon: IconButton(
-                      onPressed: () => ref.read(obscureTextProvider.notifier).update((state) => !state),
-                      icon: ref.watch(obscureTextProvider) ?
-                      Icon(
-                        CupertinoIcons.eye_slash_fill,
-                        color: Colors.grey,
-                      ) :
-                      Icon(
-                        CupertinoIcons.eye_fill,
-                        color: Color(0xFFBB957B),
-                      )
-                    ),
-                    obscureText: ref.watch(obscureTextProvider),
-                  ),
-                  SizedBox(height: 16,),
                   Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 40),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
-                        CustomCheckboxButton(
-                            text: "Remember Password".tr,
-                            padding: EdgeInsets.symmetric(vertical: 1.v),
-                            textStyle: CustomTextStyles
-                                .titleSmallUrbanistGray80003,
-                            onChange: (value) {
-                            }),
-                        GestureDetector(
-                            onTap: () {
-                              onTapTxtForgotpassword(context);
-                            },
-                            child: Padding(
-                                padding: EdgeInsets.only(top: 2.v),
-                                child: Text("Forgot Password?",
-                                    style: CustomTextStyles
-                                        .titleSmallUrbanistRedA700)))
-                      ]
+                        Text("Email".tr,
+                            style: CustomTextStyles.headlineSmallPrimary),
+                        CustomTextField(
+                          controller: emailController,
+                          validator: (text) {
+                            if (text!.isEmpty) {
+                              return 'Email is required';
+                            }
+
+                            return null; // Return null if validation passes
+                          },
+                          onChanged: (dynamic value) {
+                            bool isValidForm;
+                            // functions which are called by values changes in the Form
+                            if (_formKey.currentState!.validate()) {
+                              isValidForm = true;
+                            } else {
+                              isValidForm = false;
+                            }
+                          },
+                          hintText: 'Enter your email',
+                          prefixIcon: Icons.person,
+                        ),
+                        SizedBox(
+                          height: 24,
+                        ),
+                        Text("Password",
+                            style: CustomTextStyles.headlineSmallPrimary),
+                        CustomTextField(
+                          controller: passwordController,
+                          validator: (text) {
+                            if (text!.isEmpty) {
+                              return 'Password is required';
+                            }
+
+                            return null; // Return null if validation passes
+                          },
+                          onChanged: (dynamic value) {
+                            bool isValidForm;
+                            // functions which are called by values changes in the Form
+                            if (_formKey.currentState!.validate()) {
+                              isValidForm = true;
+                            } else {
+                              isValidForm = false;
+                            }
+                          },
+                          hintText: 'Enter your password',
+                          prefixIcon: Icons.person,
+                        ),
+                        Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              CustomCheckboxButton(
+                                  text: "Remember Password".tr,
+                                  padding: EdgeInsets.symmetric(vertical: 1.v),
+                                  textStyle: CustomTextStyles
+                                      .titleSmallUrbanistGray80003,
+                                  onChange: (value) {}),
+                              GestureDetector(
+                                  onTap: () {
+                                    onTapTxtForgotpassword(context);
+                                  },
+                                  child: Padding(
+                                      padding: EdgeInsets.only(top: 2.v),
+                                      child: Text("Forgot Password?",
+                                          style: CustomTextStyles
+                                              .titleSmallUrbanistRedA700)))
+                            ]),
+                      ],
                     ),
                   ),
                   SizedBox(height: 23),
@@ -204,29 +202,18 @@ class _SigninPasswordScreenState extends ConsumerState<SigninPasswordScreen> {
                   SizedBox(height: 31),
                   Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                     Text("Don\'t have an Account",
-                        style: CustomTextStyles
-                            .titleSmallUrbanistGray70002Medium),
-
-                    TextButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => ChooseRegistrationScreen(),
-                          ),
-                        );
-                      },
-                      child: Text("Register Now",
-                          style:
-                              CustomTextStyles.titleSmallUrbanistBlueA20001),
-                    )
+                        style:
+                            CustomTextStyles.titleSmallUrbanistGray70002Medium),
+                    SizedBox(width: 16),
+                    Text("Register Now",
+                        style: CustomTextStyles.titleSmallUrbanistBlueA20001)
                   ]),
                   CustomElevatedButton(
                     text: "Sign In",
                     margin: EdgeInsets.fromLTRB(16.0, 30, 16.0, 0.0),
-                      buttonStyle: CustomButtonStyles.fillBlackTL12,
+                    buttonStyle: CustomButtonStyles.fillBlackTL12,
                     onTap: () {
-                      signIn();
+                      confirmTransfer(context);
                     },
                   )
                 ],
@@ -239,10 +226,10 @@ class _SigninPasswordScreenState extends ConsumerState<SigninPasswordScreen> {
   }
 
   onTapArrowleftone(BuildContext context) {
-Navigator.pop(context);  }
+    Navigator.pop(context);
+  }
 
   onTapLogoone() {}
-
   onTapTxtForgotpassword(BuildContext context) {
     Navigator.push(
       context,
@@ -250,6 +237,5 @@ Navigator.pop(context);  }
         builder: (context) => ForgotPasswordScreen(),
       ),
     );
-
   }
 }
