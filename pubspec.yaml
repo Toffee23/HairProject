@@ -1,0 +1,115 @@
+name: hairsol
+description: A new Flutter project.
+version: 1.0.0+1
+environment: 
+  sdk: '>=2.17.0 <3.0.0'
+dependencies: 
+  flutter: 
+    sdk: flutter
+  get: ^4.6.5
+  connectivity_plus: ^2.3.6
+  shared_preferences: ^2.0.15
+  cached_network_image: ^3.2.1
+  flutter_svg: ^2.0.9
+  pin_code_fields: ^7.3.0
+  carousel_slider: ^4.0.0
+  smooth_page_indicator: ^1.0.0+2
+  sms_autofill: ^2.0.0
+  flutter_svg_provider: ^1.0.6
+  intl: ^0.18.0
+  flutter_screenutil: ^5.3.1
+  json_annotation: ^4.8.1
+  dio: ^5.3.3
+  flutter_otp_text_field: ^1.1.1
+  http: ^1.1.0
+  gap: ^3.0.1
+  riverpod: ^2.4.5
+  hooks_riverpod: ^2.4.5
+  get_storage: ^2.1.1
+  uuid: ^4.2.1
+  cupertino_icons: ^1.0.6
+
+
+dev_dependencies:
+  build_runner: ^2.4.6
+  flutter_test: 
+    sdk: flutter
+  json_serializable: ^6.7.1
+flutter: 
+  uses-material-design: true
+  assets: 
+    - assets/
+    - assets/images/
+  fonts: 
+    - family: Urbanist
+      fonts: 
+        - asset: assets/fonts/UrbanistRomanBold.ttf
+          weight: 700
+        - asset: assets/fonts/UrbanistRomanMedium.ttf
+          weight: 500
+        - asset: assets/fonts/UrbanistSemiBold.ttf
+          weight: 600
+    - family: Inter
+      fonts: 
+        - asset: assets/fonts/InterMedium.ttf
+          weight: 500
+        - asset: assets/fonts/InterBold.ttf
+          weight: 700
+    - family: Lora
+      fonts:
+        - asset: assets/fonts/LoraRomanSemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/LoraRomanMedium.ttf
+          weight: 500
+        - asset: assets/fonts/LoraRomanRegular.ttf
+          weight: 400
+    - family: Monda
+      fonts: 
+        - asset: assets/fonts/MondaRegular.ttf
+          weight: 400
+    - family: Poppins
+      fonts: 
+        - asset: assets/fonts/PoppinsMedium.ttf
+          weight: 500
+        - asset: assets/fonts/PoppinsRegular.ttf
+          weight: 400
+        - asset: assets/fonts/PoppinsSemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/PoppinsBold.ttf
+          weight: 700
+    - family: Amita
+      fonts: 
+        - asset: assets/fonts/AmitaBold.ttf
+          weight: 700
+    - family: Adamina
+      fonts: 
+        - asset: assets/fonts/AdaminaRegular.ttf
+          weight: 400
+    - family: Roboto
+      fonts: 
+        - asset: assets/fonts/RobotoMedium.ttf
+          weight: 500
+        - asset: assets/fonts/RobotoRomanMedium.ttf
+          weight: 500
+        - asset: assets/fonts/RobotoRomanLight.ttf
+          weight: 300
+        - asset: assets/fonts/RobotoBold.ttf
+          weight: 700
+        - asset: assets/fonts/RobotoRegular.ttf
+          weight: 400
+        - asset: assets/fonts/RobotoRomanRegular.ttf
+          weight: 400
+        - asset: assets/fonts/RobotoItalicRegular.ttf
+          weight: 400
+    - family: Lato
+      fonts: 
+        - asset: assets/fonts/LatoBold.ttf
+          weight: 700
+    - family: Open Sans
+      fonts: 
+        - asset: assets/fonts/OpenSans.ttf
+          weight: 400
+        - asset: assets/fonts/OpenSansRomanSemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/OpenSansRomanBold.ttf
+          weight: 700
