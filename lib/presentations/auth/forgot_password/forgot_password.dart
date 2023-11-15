@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hairsol/core/app_export.dart';
+import 'package:hairsol/data/apiClient/api_client.dart';
 import 'package:hairsol/presentations/auth/new_password/new_password.dart';
 import 'package:hairsol/reusables/text_field.dart';
 import 'package:hairsol/widgets/app_bar/appbar_image.dart';
@@ -15,6 +16,28 @@ class ForgotPasswordScreen extends StatelessWidget {
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   TextEditingController passwordController = new TextEditingController();
 
+  void forgetPassword() async {
+    final String email = passwordController.text.trim();
+
+    if (email.isEmpty) {
+      print('Email field is empty');
+    } else if (!email.isEmail) {
+      print('invalid email');
+    } else {
+      final response = await ApiClient().forgetPassword(email);
+
+      switch (response) {
+        case (true):
+        // Go to token verification page
+          print('Successful');
+          break;
+        default:
+        // user not found
+          print(response);
+      }
+    }
+  }
+
   confirmTransfer(BuildContext context) async {
     showDialog(
         context: context,
@@ -26,7 +49,6 @@ class ForgotPasswordScreen extends StatelessWidget {
         });
     return false;
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -87,18 +109,21 @@ class ForgotPasswordScreen extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
-
-                        SizedBox(height: 40,),
+                        SizedBox(
+                          height: 40,
+                        ),
                         Text("Confirm Password",
                             style: CustomTextStyles.headlineSmallPrimary),
                         CustomTextField(
                           controller: passwordController,
-                          validator: (text){},
-                          onChanged: (String value){},
+                          validator: (text) {},
+                          onChanged: (String value) {},
                           hintText: 'Enter your password',
-                          prefixIcon: Icons.lock ,
+                          prefixIcon: Icons.lock,
                         ),
-                        SizedBox(height: 16,),
+                        SizedBox(
+                          height: 16,
+                        ),
                         Row(
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [
@@ -112,7 +137,6 @@ class ForgotPasswordScreen extends StatelessWidget {
                                           style: CustomTextStyles
                                               .titleSmallUrbanistRedA700)))
                             ]),
-
                       ],
                     ),
                   ),
@@ -121,19 +145,20 @@ class ForgotPasswordScreen extends StatelessWidget {
                   SizedBox(height: 31),
                   Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                     Text("Don\'t have an Account",
-                        style: CustomTextStyles
-                            .titleSmallUrbanistGray70002Medium),
-                    SizedBox(width:16),
-                    Text("Register Now",
                         style:
-                            CustomTextStyles.titleSmallUrbanistBlueA20001)
+                            CustomTextStyles.titleSmallUrbanistGray70002Medium),
+                    SizedBox(width: 16),
+                    Text("Register Now",
+                        style: CustomTextStyles.titleSmallUrbanistBlueA20001)
                   ]),
                   CustomElevatedButton(
                     text: "Proceed",
                     margin: EdgeInsets.fromLTRB(16.0, 30, 16.0, 0.0),
-                      buttonStyle: CustomButtonStyles.fillBlackTL12,
+                    buttonStyle: CustomButtonStyles.fillBlackTL12,
                     onTap: () {
-                      confirmTransfer(context);
+                      print('succeed');
+                      // confirmTransfer(context);
+                      forgetPassword();
                     },
                   )
                 ],
@@ -144,8 +169,10 @@ class ForgotPasswordScreen extends StatelessWidget {
       ),
     );
   }
+
   onTapArrowleftone(BuildContext context) {
-Navigator.pop(context);  }
+    Navigator.pop(context);
+  }
 
   onTapLogoone() {}
   onTapTxtForgotpassword(BuildContext context) {
@@ -155,6 +182,5 @@ Navigator.pop(context);  }
         builder: (context) => NewPasswordScreen(),
       ),
     );
-
   }
 }

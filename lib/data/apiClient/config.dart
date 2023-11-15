@@ -3,4 +3,6 @@ class Config{
   static const String login = "/users/login/";
   static const String register = "/users/register/";
   static const String verify = "/users/verify-account/?email=";
+  static const String forgetPassword = "/users/forget-password/?email=";
+  
 }

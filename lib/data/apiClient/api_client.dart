@@ -126,6 +126,34 @@ class ApiClient extends GetConnect {
     }
   }
 
+  Future<dynamic> forgetPassword(String email) async {
+    final url = '${Config.base_url}${Config.forgetPassword}${email}';
+    final Map<String, String> headers = {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+    };
+
+    try {
+      print('do something');
+      final http.Response response = await http.get(
+        Uri.parse(url),
+        headers: headers,
+      );
+      print(response.body);
+      if (response.statusCode == 200) {
+        // Successful verification
+        return true;
+      } else {
+        // Handle error
+        return jsonDecode(response.body);
+      }
+    } catch (error) {
+      // Handle network or other errors
+      print('Error: $error');
+      return {'status': 'failed', 'message': 'Connection error'};
+    }
+  }
+
   Future<SignupResponse> registerUser(SignupModel model) async {
     var url = Uri.parse('${Config.base_url}${Config.register}');
     var headers = {'Content-Type': 'application/json'};
